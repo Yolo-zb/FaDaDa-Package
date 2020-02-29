@@ -19,7 +19,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Zhuobin\\Src\\Helper\\FaDaDaProvider"
+        "Zhuobin\\Src\\FaDaDaProvider"
       ]
     }
   }

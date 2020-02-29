@@ -297,63 +297,9 @@ class FaBigBigOrigin
         return $res;
     }
 
-    //文档签署（有效期/次数限制）
-    public function SignContract(FddSignContract $param, $data)
-    {
-        //$json = '{"platformName":"名字1","borrower":"名字2","homeUrl":"名字3"}';
-        //实例化3DES类
-        $des = new FddEncryption();
-        //参数处理
-        $params = $param->SetTransaction_id('123abc')
-            ->SetContract_id('1556418821')
-            ->SetCustomer_id('9A1D4E0F4D8A2BEF77F798184271004B')
-            ->SetDoc_title('测试')
-            ->SetReturn_url('http://39.106.168.38:81')
-            ->SetValidity('5')
-            ->SetQuantity('1')
-            ->GetValues();
-
-        $sha1 = $this->Fdd_Params['app_secret'] . $param->GetCustomer_id();
-        $enc = base64_encode(strtoupper(sha1($this->Fdd_Params['app_id'] . strtoupper(md5($param->GetTransaction_id() . $this->Fdd_Params['timestamp'] . $param->GetValidity() . $param->GetQuantity())) . strtoupper(sha1($sha1)))));
-
-        $param->SetMsg_digest($enc);
-
-        $query = array(
-            'app_id' => $this->Fdd_Params['app_id'],
-
-            'timestamp' => $this->Fdd_Params['timestamp'],
-
-            'v' => $this->Fdd_Params['v'],
-
-            'transaction_id' => $param->GetTransaction_id(),
-
-            'contract_id' => $param->GetContract_id(),
-
-            'customer_id' => $param->GetCustomer_id(),
-
-            'doc_title' => $param->GetDoc_title(),
-
-            'return_url' => 'http://39.106.168.38:81',
-
-            'validity' => $param->GetValidity(),
-
-            'quantity' => $param->GetQuantity(),
-
-            'msg_digest' => $param->GetMsg_digest()
-        );
-
-        return $this->Fdd_Params['api_url'] . self::Sign_contract_url . $des->ArrayParamToStr($query);
-    }
-
     //批量文档签署
     public function BatchSignContract(FddSignContract $param, $data, $type = 1)
     {
-        if ($type == 1) {
-            $notify_url = self::$Project_url . '/fbb/contract/notify';
-        } else if ($type == 2) {
-            $notify_url = self::$Project_url . '/times/fbb/contract/notify';
-//            $notify_url = self::Project_url . '/fbb/contract/notify';
-        }
 
         //实例化3DES类
         $des = new FddEncryption();
@@ -365,7 +311,7 @@ class FaBigBigOrigin
             ->SetDoc_title($data['doc_title'])
             ->SetCustomer_id($data['customer_id'])
             ->SetReturn_url($data['return_url'])
-            ->SetNotify_url($notify_url);
+            ->SetNotify_url($data['notify_url']);
 
         $enc = [
             'md5' => ['batch_id'],
@@ -384,24 +330,16 @@ class FaBigBigOrigin
     }
 
     //手动签署
-    public function HandSignContract(FddSignContract $param, $data, $type = 1)
+    public function HandSignContract(FddSignContract $param, $data)
     {
-        if ($type == 1) {
-            $notify_url = self::$Project_url . '/fbb/hand/sign/notify';
-            $return_url = 'https://kaola.kaolashebao.com/p/contract/contract_send_success';
-        } else if ($type == 2) {
-            $notify_url = self::$Project_url . '/times/fbb/hand/sign/notify';
-            $return_url = 'https://kaola.kaolashebao.com/p/contract_signed_success';
-        }
-
         //实例化3DES类
         $des = new FddEncryption();
         //参数处理
         $params = $param->SetTransaction_id($data['transaction_id'])
             ->SetContract_id($data['contract_id'])
             ->SetCustomer_id($data['customer_id'])
-            ->SetReturn_url($return_url)
-            ->SetNotify_url($notify_url)
+            ->SetReturn_url($data['return_url'])
+            ->SetNotify_url($data['notify_url'])
             ->SetSign_keyword($data['sign_keyword'])
             ->SetDoc_title($data['doc_title'])
             ->GetValues();

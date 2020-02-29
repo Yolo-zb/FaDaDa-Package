@@ -6,7 +6,7 @@
  * Date: 2019/6/17
  * Time: 上午10:43
  */
-namespace Zhuobin\FaDaDa\Src\Helper;
+namespace Zhuobin\FaDaDa\Src;
 
 use Illuminate\Support\ServiceProvider;
 

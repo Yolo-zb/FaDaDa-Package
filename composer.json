@@ -1,0 +1,26 @@
+{
+  "name":             "zhuobin/fadada",
+  "description":      "fadada-function",
+  "keywords":         ["fadada"],
+  "homepage":         "https://github.com/Yolo-zb/FaDaDa-Package.git",
+  "time":             "2020-02-29",
+  "license":          "MIT",
+  "authors": [{
+    "name":         "Zhuo bin",
+    "email":        "1002435962@qq.com",
+    "homepage":     "https://github.com/Yolo-zb/FaDaDa-Package.git",
+    "role":         "Engineer"
+  }],
+  "autoload": {
+    "psr-4": {
+      "Zhuobin\\Src\\": "Src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Zhuobin\\Src\\Helper\\FaDaDaProvider"
+      ]
+    }
+  }
+}

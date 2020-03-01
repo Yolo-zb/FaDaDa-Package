@@ -1,5 +1,5 @@
 <?php
-namespace App\Packages\FaBigBig;
+namespace Zhuobin\FaDaDa\Src;
 /**
  * 3DES加解密类
  */

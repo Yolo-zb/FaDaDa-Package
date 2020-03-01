@@ -22,10 +22,7 @@ class FaDaDaProvider extends ServiceProvider
     {
         //注册helper
         $this->app->singleton('FaDaDa', function () {
-            return new FaDaDaInstance();
+            return new FaBigBigOrigin();
         });
-
-        //实例helper
-        $this->app->make('FaDaDa');
     }
 }

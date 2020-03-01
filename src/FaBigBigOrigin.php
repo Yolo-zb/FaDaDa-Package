@@ -6,12 +6,9 @@
  * Time: 下午4:16
  */
 
-namespace Zhuobin\FaDaDa;
+namespace Zhuobin\FaDaDa\Src;
 
 use App\Exceptions\ApiException;
-
-require 'Fdd.Encryption.php';
-
 
 class FaBigBigOrigin
 {
@@ -67,12 +64,6 @@ class FaBigBigOrigin
 
     static $Project_url = '';//Api接口地址
 
-//    static $Project_url = 'https://kaola.kaolashebao.com/api';
-
-//    const Project_url = 'https://kaolashebao.han-zi.cn/api';//项目URL
-
-//    const Project_url = 'http://zhuobintwo.han-zi.cn/api';
-
     public function __construct()
     {
         self::$Project_url = \Config::get('app.url');
@@ -125,7 +116,7 @@ class FaBigBigOrigin
     }
 
     //获取个人实名认证地址
-    public function GetUserIdentificationUrl($customer_data, $type = 1)
+    public function GetUserIdentificationUrl($customer_data)
     {
 //        $param = [
 //            'customer_ident_type' => '0',
@@ -183,14 +174,16 @@ class FaBigBigOrigin
     }
 
     //三要素验证
-    public function RealNameAuthOperator(FddRealNameAuth $param, $data)
+    public function RealNameAuthOperator($data)
     {
+        $class_param = new FddRealNameAuth();
+
         $encrypt = new FddEncryption();
 
-        $params = $param->SetName($data['name'])
+        $params = $class_param->SetName($data['name'])
             ->SetMobile($data['phone'])
             ->SetId_card($data['identity_num'])
-            ->SetVerify_element($encrypt->encrypt($param->GetName() . '|' . $param->GetId_card() . '|' . $param->GetMobile()))
+            ->SetVerify_element($encrypt->encrypt($class_param->GetName() . '|' . $class_param->GetId_card() . '|' . $class_param->GetMobile()))
             ->GetValues();
 
         $enc = [
@@ -204,9 +197,11 @@ class FaBigBigOrigin
     }
 
     //合同模版上传
-    public function UploadContractTemplateCreate(FddTemplate $param, $data)
+    public function UploadContractTemplateCreate($data)
     {
-        $params = $param->SetTemplate_id($data['template_id'])//设置模版ID
+        $class_param = new FddTemplate();
+
+        $params = $class_param->SetTemplate_id($data['template_id'])//设置模版ID
         ->SetDoc_url($data['template_path'])//设置模版PDF路径
         ->GetValues();
 
@@ -225,9 +220,11 @@ class FaBigBigOrigin
      * @param FddTemplate $param
      * @param $data
      */
-    public function FindPersonCertInfo(FddRealNameAuth $param, $data)
+    public function FindPersonCertInfo($data)
     {
-        $params = $param->SetVerified_serialNo($data['verified_serialno'])
+        $class_param = new FddRealNameAuth();
+
+        $params = $class_param->SetVerified_serialNo($data['verified_serialno'])
             ->GetValues();//设置模版ID
 
         $enc = [
@@ -241,38 +238,34 @@ class FaBigBigOrigin
     }
 
     //查看合同模版
-    public function ViewTemplate(FddTemplate $param, $data)
+    public function ViewTemplate($data)
     {
+        $class_param = new FddTemplate();
         //查看合同模板 地址
-        //$param->SetTemplate_id($data['template_id']);
-        $param->SetTemplate_id($data);
-        //实例化3DES类
-        $des = new FddEncryption();
+        $params = $class_param->SetTemplate_id($data)->GetValues();
         //设置加密串
         $enc = [
             'md5' => [],
             'sha1' => ['template_id']
         ];
-
-        $params = $param->GetValues();
 
         return $this->_post(self::Check_Template_url, $params, $enc, 'url');
     }
 
     //获取pdf模版表单域key值接口
-    public function GetPdfTemplateKeys(FddTemplate $param, $template_id)
+    public function GetPdfTemplateKeys($data)
     {
+        $class_param = new FddTemplate();
         //参数处理
-        $param->SetTemplate_id($template_id);
+        $params = $class_param->SetTemplate_id($data['template_id'])
+            ->GetValues();
 
-        //实例化3DES类
-        $des = new FddEncryption();
         //设置加密串
         $enc = [
             'md5' => [],
             'sha1' => ['template_id']
         ];
-        $params = $param->GetValues();
+
         $res = $this->_post(self::Template_key_url, $params, $enc);
         return $res;
     }
@@ -281,30 +274,30 @@ class FaBigBigOrigin
     public function FillTemplateKeys(FddTemplate $param, $data)
     {
         //$json = '{"platformName":"名字1","borrower":"名字2","homeUrl":"名字3"}';
+        $class_param = new FddTemplate();
+
         //参数处理
-        $param->SetDoc_title($data['title']);
-        $param->SetTemplate_id($data['template_id']);
-        $param->SetContract_id($data['contract_id']);
-        $param->SetParameter_map($data['fill_data']);
+        $params = $class_param->SetDoc_title($data['title'])
+            ->SetTemplate_id($data['template_id'])
+            ->SetContract_id($data['contract_id'])
+            ->SetParameter_map($data['fill_data'])
+            ->GetValues();
 
         $enc = [
             'md5' => [],
             'sha1' => ['template_id', 'contract_id']
         ];
 
-        $params = $param->GetValues();
         $res = $this->_post(self::Fill_Template_url, $params, $enc);
         return $res;
     }
 
     //批量文档签署
-    public function BatchSignContract(FddSignContract $param, $data, $type = 1)
+    public function BatchSignContract($data)
     {
-
-        //实例化3DES类
-        $des = new FddEncryption();
+        $class_params = new FddSignContract();
         //参数处理
-        $params = $param->SetTransaction_id($data['second_transaction_id'])
+        $class_params->SetTransaction_id($data['second_transaction_id'])
             ->SetBatch_id($data['batch_id'])
             ->SetBatch_title($data['batch_title'])
             ->SetSign_data($data['sign_data'])
@@ -318,24 +311,22 @@ class FaBigBigOrigin
             'sha1' => ['customer_id']
         ];
 
-
         if (isset($data['outh_customer_id'])) {
-            $param->SetOuth_customer_id($data['outh_customer_id']);
+            $class_params->SetOuth_customer_id($data['outh_customer_id']);
             array_push($enc['sha1'], 'outh_customer_id');
         }
 
-        $params = $param->GetValues();
+        $params = $class_params->GetValues();
 
         return $this->_post(self::Batch_sign_contract_url, $params, $enc, 'url');
     }
 
     //手动签署
-    public function HandSignContract(FddSignContract $param, $data)
+    public function HandSignContract($data)
     {
-        //实例化3DES类
-        $des = new FddEncryption();
+        $class_params = new FddSignContract();
         //参数处理
-        $params = $param->SetTransaction_id($data['transaction_id'])
+        $params = $class_params->SetTransaction_id($data['transaction_id'])
             ->SetContract_id($data['contract_id'])
             ->SetCustomer_id($data['customer_id'])
             ->SetReturn_url($data['return_url'])
@@ -353,19 +344,19 @@ class FaBigBigOrigin
     }
 
     //合同归档
-    public function PigeonholeContract($contract_id)
+    public function PigeonholeContract($data)
     {
-        $params['contract_id'] = $contract_id;
+//        $data['contract_id'] = $contract_id;
 
         $enc = [
             'md5' => [],
             'sha1' => ['contract_id']
         ];
 
-        $res = $this->_post(self::Pigeonhole_url, $params, $enc);
+        $res = $this->_post(self::Pigeonhole_url, $data, $enc);
 
         if ($res['code'] !== '1000') {
-            return 'a';
+            return $res;
         }
 
         return $res;
@@ -383,13 +374,15 @@ class FaBigBigOrigin
 
         $res = $this->_post(self::Check_person_verify_url, $params, $enc);
 
-        dd($res);
+        return $res;
     }
 
     //个人CA证书
-    public function ApplyPersonalCA(FddDataBaseCA $param, $customer_data)
+    public function ApplyPersonalCA($customer_data)
     {
-        $params = $param->SetCustomer_id($customer_data['customer_id'])
+        $class_params = new FddDataBaseCA();
+
+        $params = $class_params->SetCustomer_id($customer_data['customer_id'])
             ->SetVerified_serialNo($customer_data['verified_serialno'])
             ->GetValues();
 
@@ -406,9 +399,11 @@ class FaBigBigOrigin
     /**
      * 新增盖章
      */
-    public function AddSignature(FddSignature $param, $data)
+    public function AddSignature($data)
     {
-        $params = $param->SetCustomer_id($data['customer_id'])
+        $class_params = new FddSignature();
+
+        $params = $class_params->SetCustomer_id($data['customer_id'])
             ->SetSignature_img_base64($data['signature_img_base64'])
             ->GetValues();
 
@@ -425,9 +420,11 @@ class FaBigBigOrigin
     /**
      * 设置默认盖章
      */
-    public function SetSignature(FddSignature $param, $data)
+    public function SetSignature($data)
     {
-        $params = $param->SetCustomer_id($data['customer_id'])
+        $class_params = new FddSignature();
+
+        $params = $class_params->SetCustomer_id($data['customer_id'])
             ->SetSignature_id($data['signature_id'])
             ->GetValues();
 
@@ -447,9 +444,11 @@ class FaBigBigOrigin
      * @param $data
      * @return mixed|string
      */
-    public function GetSignature(FddSignature $param, $data)
+    public function GetSignature($data)
     {
-        $params = $param->SetCustomer_id($data['customer_id'])
+        $class_params = new FddSignature();
+
+        $params = $class_params->SetCustomer_id($data['customer_id'])
 //            ->SetSignature_id($data['signature_id'])
             ->GetValues();
 
@@ -466,14 +465,16 @@ class FaBigBigOrigin
     /**
      * 企业CA申请
      */
-    public function ComEmailApplyCA(FddDataBaseCA $class, $param)
+    public function ComEmailApplyCA($param)
     {
         $encrypt = new FddEncryption();
 
-        $params = $class->SetCustomer_name($param['customer_name'])
+        $class_params = new FddDataBaseCA();
+
+        $params = $class_params->SetCustomer_name($param['customer_name'])
             ->SetMobile($param['mobile'])
             ->SetOrganization($param['organization'])
-            ->SetId_Mobile($encrypt->encrypt($class->GetOrganization() . '|' . $class->GetMobile()))
+            ->SetId_Mobile($encrypt->encrypt($class_params->GetOrganization() . '|' . $class_params->GetMobile()))
             ->GetValues();
 
         $enc = [
@@ -494,7 +495,9 @@ class FaBigBigOrigin
      */
     public function DeleteContract(FddContractManageMent $class, $param)
     {
-        $params = $class->SetContract_id($param['contract_id'])
+        $class_params = new FddContractManageMent();
+
+        $params = $class_params->SetContract_id($param['contract_id'])
             ->GetValues();
 
         $enc = [
@@ -513,9 +516,11 @@ class FaBigBigOrigin
      * @param $data
      * @return mixed|string
      */
-    public function AuthorizeSignature(FddAuthorization $param, $data)
+    public function AuthorizeSignature($data)
     {
-        $params = $param->SetCompany_id($data['company_id'])
+        $class_params = new FddAuthorization();
+
+        $params = $class_params->SetCompany_id($data['company_id'])
             ->SetPerson_id($data['person_id'])
             ->SetOperate_type($data['operate_type'])
 //            ->SetSignature_id($data['signature_id'])
@@ -552,9 +557,6 @@ class FaBigBigOrigin
                 $query[$k] = $v;
             }
         }
-
-        \Log::error($this->Fdd_Params['api_url'] . $url_suffix);
-        \Log::error($query);
 
         if ($action == 'url') {
             //实例化3DES类

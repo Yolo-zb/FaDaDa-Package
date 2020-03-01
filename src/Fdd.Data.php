@@ -2733,6 +2733,8 @@ class FddTemplate extends FddDataBase
     public function SetDoc_title($value)
     {
         $this->values['doc_title'] = $value;
+
+        return $this;
     }
 
     /**
@@ -2778,6 +2780,8 @@ class FddTemplate extends FddDataBase
     public function SetContract_id($value)
     {
         $this->values['contract_id'] = $value;
+
+        return $this;
     }
 
     /**
@@ -2859,6 +2863,8 @@ class FddTemplate extends FddDataBase
     public function SetParameter_map($value)
     {
         $this->values['parameter_map'] = $value;
+
+        return $this;
     }
 
     /**

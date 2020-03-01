@@ -11,7 +11,7 @@ namespace Zhuobin\FaDaDa\Src;
 use Illuminate\Support\ServiceProvider;
 
 
-class HelperProvider extends ServiceProvider
+class FaDaDaProvider extends ServiceProvider
 {
     public function boot()
     {

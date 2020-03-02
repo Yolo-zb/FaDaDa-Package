@@ -1,9 +1,8 @@
 <?php
 
-namespace JiaLeo\Laravel\Signature\Console;
+namespace Zhuobin\FaDaDa\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Schema\Blueprint;
 
 class FadadaCommand extends Command
 {

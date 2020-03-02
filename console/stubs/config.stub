@@ -2,14 +2,14 @@
 return [
     //测试环境
     'testing' => [
-        'app_id' => '402013',
-        'app_secret' => 'IW3HUyJzpPzyLy5osVzHHE7e',
-        'url' => 'https://testapi.fadada.com:8443/api/'
+        'app_id' => 'XXXXXX',
+        'app_secret' => 'XXXXXX',
+        'url' => 'XXXXXX'
     ],
     //正式环境
     'production' => [
-        'app_id' => '001301',
-        'app_secret' => 'nLFmfXVIEhR8yhzKV45J0gDS',
-        'url' => 'https://extapi.fadada.com/api2/'
+        'app_id' => 'XXXXXX',
+        'app_secret' => 'XXXXXX',
+        'url' => 'XXXXXX'
     ]
 ];

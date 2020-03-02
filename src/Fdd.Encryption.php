@@ -10,7 +10,7 @@ class FddEncryption
 
     public function __construct()
     {
-        $this->key = \Config::get('fabigbig.app_secret');
+        $this->key = \Config::get('fadada.' . \Config::get('app.env') . '.app_secret');
     }
 
     /**

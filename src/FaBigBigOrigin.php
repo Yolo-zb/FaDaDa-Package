@@ -70,21 +70,21 @@ class FaBigBigOrigin
 
         $fddParams = new FddDataBase();
 
-        $this->Fdd_Params = $fddParams->SetUrl(\Config::get('fabigbig.' . \Config::get('app.env') . '.url'))//设置ApiUrl
-        ->SetApp_id(\Config::get('fabigbig.' . \Config::get('app.env') . '.app_id'))//设置app_id
-        ->SetApp_secret(\Config::get('fabigbig.' . \Config::get('app.env') . '.app_secret'))//设置app_secret
+        $this->Fdd_Params = $fddParams->SetUrl(\Config::get('fadada.' . \Config::get('app.env') . '.url'))//设置ApiUrl
+        ->SetApp_id(\Config::get('fadada.' . \Config::get('app.env') . '.app_id'))//设置app_id
+        ->SetApp_secret(\Config::get('fadada.' . \Config::get('app.env') . '.app_secret'))//设置app_secret
         ->SetTimestamp(time())//设置时间戳
         ->SetV('2.5')//设置版本号
         ->GetValues();
     }
 
     //注册接口,ywu
-    public function GetUserAccount($open_id)
+    public function GetUserAccount($data)
     {
         //业务参数
         $param = [
             'account_type' => '1', //个人类型
-            'open_id' => $open_id //用户在接入方的唯一标识//手机号
+            'open_id' => $data['open_id'] //用户在接入方的唯一标识//手机号
         ];
 
         $enc = [
@@ -98,11 +98,11 @@ class FaBigBigOrigin
     }
 
     //短链接
-    public function GetShortUrl($url)
+    public function GetShortUrl($data)
     {
         //业务参数
         $param = [
-            'source_url' => $url //网址
+            'source_url' => $data['url'] //网址
         ];
 
         $enc = [

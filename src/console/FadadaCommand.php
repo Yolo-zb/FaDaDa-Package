@@ -1,6 +1,6 @@
 <?php
 
-namespace Zhuobin\FaDaDa\Console;
+namespace Zhuobin\FaDaDa\Src\Console;
 
 use Illuminate\Console\Command;
 

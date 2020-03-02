@@ -25,7 +25,7 @@ class FaDaDaProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Zhuobin\FaDaDa\Console\FadadaCommand::class
+                \Zhuobin\FaDaDa\Src\Console\FadadaCommand::class
             ]);
         }
     }
